@@ -77,3 +77,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Optionally, poll for new messages every few seconds
     setInterval(fetchMessages, 3000);
 });
+
+const msalConfig = {
+    auth: {
+        clientId: '628b6d76-0b8c-498d-8b5c-f2bffea46380',
+        authority: 'https://login.microsoftonline.com/e3e398f8-a6b7-41ed-bae0-289371b4356e',
+        redirectUri: window.location.origin
+    }
+};
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+async function signIn() {
+    try {
+        const loginResponse = await msalInstance.loginPopup({
+            scopes: ["openid", "profile", "email"]
+        });
+        showProfile(loginResponse.account);
+    } catch (error) {
+        alert('Login failed: ' + error);
+    }
+}
+
+function showProfile(account) {
+    document.getElementById('profile').textContent = account.username;
+    document.getElementById('login-btn').style.display = 'none';
+    document.getElementById('logout-btn').style.display = '';
+}
+
+function signOut() {
+    msalInstance.logoutPopup();
+    document.getElementById('profile').textContent = '';
+    document.getElementById('login-btn').style.display = '';
+    document.getElementById('logout-btn').style.display = 'none';
+}
+
+document.getElementById('login-btn').onclick = signIn;
+document.getElementById('logout-btn').onclick = signOut;
