@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         li.querySelector('.edit-btn').onclick = () => {
             const newMsg = prompt('Edit your message:', msg.message);
             if (newMsg && newMsg !== msg.message) {
-                fetch(`/api/messages/${msg.id}`, {
+                fetch(`/api/messages?id=${msg.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: newMsg })
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Delete button
         li.querySelector('.delete-btn').onclick = () => {
             if (confirm('Delete this message?')) {
-                fetch(`/api/messages/${msg.id}`, { method: 'DELETE' })
+                fetch(`/api/messages?id=${msg.id}`, { method: 'DELETE' })
                     .then(fetchMessages);
             }
         };
