@@ -1,0 +1,16 @@
+{
+  "name": "my-static-express-app",
+  "version": "1.0.0",
+  "description": "A static HTML and JavaScript application with an Express.js backend.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^8.15.1",
+    "socket.io": "^4.8.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
