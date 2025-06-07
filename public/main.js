@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const socket = io();
     const messagesList = document.getElementById('messages');
     const form = document.getElementById('chat-form');
     const usernameInput = document.getElementById('username');
@@ -58,14 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         messagesList.scrollTop = messagesList.scrollHeight;
     }
 
-    // Listen for new messages
-    socket.on('chat message', (msg) => {
-        fetchMessages();
-    });
-
-    socket.on('chat update', fetchMessages);
-    socket.on('chat delete', fetchMessages);
-
     // Handle form submission
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -80,5 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         messageInput.value = '';
     });
 
+    // Initial fetch
     fetchMessages();
+
+    // Optionally, poll for new messages every few seconds
+    setInterval(fetchMessages, 3000);
 });

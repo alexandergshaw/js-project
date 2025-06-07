@@ -1,15 +1,10 @@
 const express = require('express');
 const path = require('path');
-const http = require('http');
-const socketIo = require('socket.io');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
-
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json()); // For parsing JSON bodies
+app.use(express.json());
 
 // In-memory message store
 let messages = [];
@@ -25,7 +20,7 @@ app.get('/', (req, res) => {
 
 // API to get messages (Read)
 app.get('/api/messages', (req, res) => {
-    res.json(messages.slice(-100)); // return last 100 messages
+    res.json(messages.slice(-100));
 });
 
 // API to create a message (Create)
@@ -39,7 +34,6 @@ app.post('/api/messages', (req, res) => {
         timestamp: new Date()
     };
     messages.push(chat);
-    io.emit('chat message', chat);
     res.status(201).json(chat);
 });
 
@@ -51,7 +45,6 @@ app.put('/api/messages/:id', (req, res) => {
     if (!chat) return res.status(404).json({ error: 'Message not found' });
     if (!message) return res.status(400).json({ error: 'Message required' });
     chat.message = message;
-    io.emit('chat update', chat);
     res.json(chat);
 });
 
@@ -61,25 +54,10 @@ app.delete('/api/messages/:id', (req, res) => {
     const index = messages.findIndex(m => m.id === id);
     if (index === -1) return res.status(404).json({ error: 'Message not found' });
     const [deleted] = messages.splice(index, 1);
-    io.emit('chat delete', deleted);
     res.json(deleted);
 });
 
-io.on('connection', (socket) => {
-    socket.on('chat message', (data) => {
-        const { username, message } = data;
-        const chat = {
-            id: nextId++,
-            username,
-            message,
-            timestamp: new Date()
-        };
-        messages.push(chat);
-        io.emit('chat message', chat);
-    });
-});
-
 // Start the server
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
